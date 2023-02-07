@@ -1,9 +1,11 @@
+require('dotenv').config();
+
+const PORT = process.env.PORT || 3000;
 const express = require('express');
 const { errors } = require('celebrate');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const { createUser, login } = require('./controllers/users');
-// const { createMovie } = require('./controllers/movies');
 const { users } = require('./routes/users');
 const { movies } = require('./routes/movies');
 const { return404 } = require('./utils/utils');
@@ -11,7 +13,6 @@ const { auth } = require('./middlewares/auth');
 const { createUserValidator, loginValidator } = require('./middlewares/userValidation');
 const { requestLogger, errorLogger } = require('./middlewares/loggers');
 
-const PORT = process.env.PORT || 3000;
 const app = express();
 
 async function connectToDb() {
