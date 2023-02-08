@@ -71,15 +71,17 @@ module.exports.deleteMovie = async (req, res, next) => {
 
   try {
     const movie = await Movie.findById(movieId);
-    const movieOwner = movie.owner.valueOf();
 
     if (!movie) {
       throw new NotFoundError('Фильма с таким ID нет в списке');
     }
 
-    if (req.user._id === movieOwner) {
+    const movieOwner = movie.owner.valueOf();
+    if (req.user._id !== movieOwner) {
       throw new AuthorizationError('Вы не можете удалить фмльмы другого пользователя');
     }
+
+    await Movie.findByIdAndRemove(movieId);
 
     return res.send(movie);
   } catch (err) {
