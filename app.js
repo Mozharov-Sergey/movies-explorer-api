@@ -23,10 +23,6 @@ async function connectToDb() {
   }
 }
 
-app.listen(PORT, () => {
-  console.log(`Сервер успешно запущен на порту ${PORT}`);
-});
-
 app.use(cors());
 connectToDb();
 
@@ -41,10 +37,16 @@ app.use('/users', users);
 
 app.use('*', auth, return404);
 app.use(errorLogger);
+
 app.use(errors());
 
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
   const message = statusCode === 500 ? 'Ошибка на сервере' : err.message;
-  res.status(statusCode).send(message);
+  res.status(statusCode).send({ error: message });
+  next(); // Необходимо для удовлетворения линтера.
+});
+
+app.listen(PORT, () => {
+  console.log(`Сервер успешно запущен на порту ${PORT}`);
 });

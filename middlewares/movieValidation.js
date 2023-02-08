@@ -11,25 +11,24 @@ const customIsUrl = (value) => {
 
 const createMovieValidation = () => celebrate({
   body: Joi.object().keys({
-    country: Joi.string().required(true),
-    director: Joi.string().required(true),
-    duration: Joi.number().required(true),
-    year: Joi.string().required(true),
-    description: Joi.string().required(true),
-    image: Joi.required(true).custom(customIsUrl),
-    trailerLink: Joi.required(true).custom(customIsUrl),
-    thumbnail: Joi.required(true).custom(customIsUrl),
-    owner: Joi.required(true).hex().length(24),
-    movieId: Joi.string().required(true),
-    nameRU: Joi.string().required(true),
-    nameEN: Joi.string().required(true),
+    country: Joi.string().required(),
+    director: Joi.string().required(),
+    duration: Joi.number().required(),
+    year: Joi.string().required(),
+    description: Joi.string().required(),
+    image: Joi.required().custom(customIsUrl),
+    trailerLink: Joi.required().custom(customIsUrl),
+    thumbnail: Joi.required().custom(customIsUrl),
+    movieId: Joi.string().required(),
+    nameRU: Joi.string().required(),
+    nameEN: Joi.string().required(),
   }),
 });
 
 const deleteMovieValidation = () => celebrate({
   params: Joi.object().keys({
-    movieId: Joi.required(true).hex().length(24),
+    movieId: Joi.string().required().hex().length(24),
   }),
 });
 
-module.eports = { createMovieValidation, deleteMovieValidation };
+module.exports = { createMovieValidation, deleteMovieValidation };
