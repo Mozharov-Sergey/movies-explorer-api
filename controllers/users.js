@@ -9,9 +9,14 @@ const { NODE_ENV, JWT_SECRET } = process.env;
 
 module.exports.updateUserInfo = async (req, res, next) => {
   const { name, email } = req.body;
+  let { password } = req.body;
 
   try {
-    await User.findByIdAndUpdate(req.user._id, { name, email }).orFail(() => NotFoundError('Такого пользователя не существует'));
+    if (password) {
+      password = await bcrypt.hash(password, 10);
+    }
+
+    await User.findByIdAndUpdate(req.user._id, { name, email, password }).orFail(() => NotFoundError('Такого пользователя не существует'));
     const updatedUser = await User.findById(req.user._id);
     return res.send(updatedUser);
   } catch (err) {

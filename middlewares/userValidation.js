@@ -2,8 +2,9 @@ const { celebrate, Joi } = require('celebrate');
 
 const createUserValidator = () => celebrate({
   body: Joi.object().keys({
-    name: Joi.string().required(true).min(2).max(30),
-    password: Joi.required(true),
+    name: Joi.string().required().min(2).max(30),
+    password: Joi.string().required(),
+    email: Joi.string().required(),
   }),
 });
 
@@ -11,6 +12,7 @@ const updateUserValidator = () => celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     email: Joi.string().email(),
+    password: Joi.string(),
   }),
 });
 
