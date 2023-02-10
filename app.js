@@ -1,6 +1,7 @@
 require('dotenv').config();
 
 const PORT = process.env.PORT || 3000;
+const { NODE_ENV, DATABASE_ADRESS } = process.env;
 const express = require('express');
 const { errors } = require('celebrate');
 const cors = require('cors');
@@ -10,6 +11,7 @@ const { users } = require('./routes/users');
 const { movies } = require('./routes/movies');
 const { return404 } = require('./utils/utils');
 const { auth } = require('./middlewares/auth');
+const { errorsHandler } = require('./middlewares/errorsHandler');
 const { createUserValidator, loginValidator } = require('./middlewares/userValidation');
 const { requestLogger, errorLogger } = require('./middlewares/loggers');
 
@@ -17,7 +19,7 @@ const app = express();
 
 async function connectToDb() {
   try {
-    await mongoose.connect('mongodb://127.0.0.1:27017/moviesdb', {});
+    await mongoose.connect(NODE_ENV === 'production' ? DATABASE_ADRESS : 'mongodb://127.0.0.1:27017/bitfilmsdb', {});
   } catch (e) {
     console.log(e);
   }
@@ -40,12 +42,7 @@ app.use(errorLogger);
 
 app.use(errors());
 
-app.use((err, req, res, next) => {
-  const statusCode = err.statusCode || 500;
-  const message = statusCode === 500 ? 'Ошибка на сервере' : err.message;
-  res.status(statusCode).send({ error: message });
-  next(); // Необходимо для удовлетворения линтера.
-});
+app.use(errorsHandler);
 
 app.listen(PORT, () => {
   console.log(`Сервер успешно запущен на порту ${PORT}`);

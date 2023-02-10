@@ -1,15 +1,11 @@
 const { NotFoundError } = require('../errors/NotFoundError');
 const { BadRequestError } = require('../errors/BadRequestError');
-const { AuthorizationError } = require('../errors/AuthorizationError');
+const { UnauthorizerError } = require('../errors/UnauthorizedError');
 const Movie = require('../models/movie');
 
 module.exports.getAllMovies = async (req, res, next) => {
   try {
-    const allMovies = await Movie.find({});
-
-    if (!allMovies) {
-      throw new NotFoundError('Ошибка поиска фильмов');
-    }
+    const allMovies = await Movie.find({ owner: req.user._id });
     return res.send(allMovies);
   } catch (err) {
     return next(err);
@@ -78,7 +74,7 @@ module.exports.deleteMovie = async (req, res, next) => {
 
     const movieOwner = movie.owner.valueOf();
     if (req.user._id !== movieOwner) {
-      throw new AuthorizationError('Вы не можете удалить фмльмы другого пользователя');
+      throw new UnauthorizerError('Вы не можете удалить фильмы другого пользователя');
     }
 
     await Movie.findByIdAndRemove(movieId);

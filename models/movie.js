@@ -67,7 +67,7 @@ const movieSchema = mongoose.Schema({
   },
 
   movieId: {
-    type: String, // Под вопросом
+    type: Number,
     required: true,
   },
 
