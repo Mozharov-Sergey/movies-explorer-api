@@ -6,7 +6,6 @@ const { createUserValidator, loginValidator } = require('../middlewares/userVali
 const { createUser, login } = require('../controllers/users');
 const { users } = require('./users');
 const { movies } = require('./movies');
-const { return404 } = require('../utils/utils');
 
 index.post('/signup', createUserValidator(), createUser);
 index.post('/signin', loginValidator(), login);
@@ -15,7 +14,5 @@ index.use(auth);
 
 index.use('/movies', movies);
 index.use('/users', users);
-
-index.use('*', auth, return404);
 
 module.exports = { index };
