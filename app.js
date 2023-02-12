@@ -6,14 +6,9 @@ const express = require('express');
 const { errors } = require('celebrate');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const { createUser, login } = require('./controllers/users');
-const { users } = require('./routes/users');
-const { movies } = require('./routes/movies');
-const { return404 } = require('./utils/utils');
-const { auth } = require('./middlewares/auth');
 const { errorsHandler } = require('./middlewares/errorsHandler');
-const { createUserValidator, loginValidator } = require('./middlewares/userValidation');
 const { requestLogger, errorLogger } = require('./middlewares/loggers');
+const { index } = require('./routes/index');
 
 const app = express();
 
@@ -31,17 +26,10 @@ connectToDb();
 app.use(express.json());
 app.use(requestLogger);
 
-app.post('/signup', createUserValidator(), createUser);
-app.post('/signin', loginValidator(), login);
+app.use('/', index);
 
-app.use('/movies', movies);
-app.use('/users', users);
-
-app.use('*', auth, return404);
 app.use(errorLogger);
-
 app.use(errors());
-
 app.use(errorsHandler);
 
 app.listen(PORT, () => {
