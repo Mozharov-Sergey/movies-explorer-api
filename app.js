@@ -6,6 +6,7 @@ const express = require('express');
 const { errors } = require('celebrate');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const { devDataBase } = require('./utils/constants');
 const { errorsHandler } = require('./middlewares/errorsHandler');
 const { requestLogger, errorLogger } = require('./middlewares/loggers');
 const { index } = require('./routes/index');
@@ -16,7 +17,7 @@ const app = express();
 
 async function connectToDb() {
   try {
-    await mongoose.connect(NODE_ENV === 'production' ? DATABASE_ADRESS : 'mongodb://127.0.0.1:27017/bitfilmsdb', {});
+    await mongoose.connect(NODE_ENV === 'production' ? DATABASE_ADRESS : devDataBase, {});
   } catch (e) {
     console.log(e);
   }
