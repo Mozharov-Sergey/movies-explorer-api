@@ -2,7 +2,7 @@
 
 
 # Backend:
-https://api.mozharov.nomoredomains.work
+https://api.mozharov.nomoredomains.work/api
 
 # Frontend:
 
