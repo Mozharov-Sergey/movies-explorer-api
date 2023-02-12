@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const { errorMessages } = require('../utils/constants');
 const { AuthorizationError } = require('../errors/AuthorizationError');
 const { NotFoundError } = require('../errors/NotFoundError');
 const { ConflictError } = require('../errors/ConflictError');
@@ -14,10 +15,11 @@ module.exports.updateUserInfo = async (req, res, next) => {
     const isUserExists = Boolean(User.findOne({ email }));
 
     if (isUserExists) {
-      throw new ConflictError('Пользователь с таким Email уже существует');
+      throw new ConflictError(errorMessages.userDuplication);
     }
 
-    await User.findByIdAndUpdate(req.user._id, { name, email }).orFail(() => NotFoundError('Такого пользователя не существует'));
+    await User.findByIdAndUpdate(req.user._id, { name, email })
+      .orFail(() => NotFoundError(errorMessages.userNotExist));
     const updatedUser = await User.findById(req.user._id);
     return res.send(updatedUser);
   } catch (err) {
@@ -31,12 +33,12 @@ module.exports.login = async (req, res, next) => {
   try {
     const user = await User.findOne({ email }).select('+password');
     if (!user) {
-      throw new AuthorizationError('Не верный пользователь или пароль');
+      throw new AuthorizationError(errorMessages.loginError);
     }
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
 
     if (!isPasswordCorrect) {
-      throw new AuthorizationError('Не верный пользователь или пароль');
+      throw new AuthorizationError(errorMessages.loginError);
     }
 
     const token = await jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', {
@@ -66,7 +68,7 @@ module.exports.createUser = async (req, res, next) => {
     });
   } catch (err) {
     if (err.code === 11000) {
-      return next(new ConflictError('Пользователь с таким email уже существует'));
+      return next(new ConflictError(errorMessages.userDuplication));
     }
     return next(err);
   }
@@ -76,7 +78,7 @@ module.exports.getMe = async (req, res, next) => {
   try {
     const user = await User.findById(req.user._id);
     if (!user) {
-      throw NotFoundError('Такого пользователя несуществует');
+      throw NotFoundError(errorMessages.userNotExist);
     }
     return res.send(user);
   } catch (err) {

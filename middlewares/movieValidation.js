@@ -1,10 +1,11 @@
 const { celebrate, Joi } = require('celebrate');
 const validator = require('validator');
+const { errorMessages } = require('../utils/constants');
 
 const customIsUrl = (value) => {
   const isUrl = validator.isURL(value);
   if (!isUrl) {
-    throw new Error('не корректный URL');
+    throw new Error(errorMessages.incorrectURL);
   }
   return value;
 };
