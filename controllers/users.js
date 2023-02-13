@@ -12,16 +12,17 @@ module.exports.updateUserInfo = async (req, res, next) => {
   const { name, email } = req.body;
 
   try {
-    const user = await User.findOne({ email });
+    const isUserExist = await User.findOne({ email });
+    const currentUser = await User.findById(req.user._id);
 
-    if (user) {
-      throw new ConflictError(errorMessages.userDuplication);
+    if (!isUserExist || (isUserExist && currentUser.email === email)) {
+      await User.findByIdAndUpdate(req.user._id, { name, email })
+        .orFail(() => NotFoundError(errorMessages.userNotExist));
+      const updatedUser = await User.findById(req.user._id);
+      return res.send(updatedUser);
     }
 
-    await User.findByIdAndUpdate(req.user._id, { name, email })
-      .orFail(() => NotFoundError(errorMessages.userNotExist));
-    const updatedUser = await User.findById(req.user._id);
-    return res.send(updatedUser);
+    throw new ConflictError(errorMessages.userDuplication);
   } catch (err) {
     return next(err);
   }
