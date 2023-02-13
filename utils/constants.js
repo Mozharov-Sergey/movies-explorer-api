@@ -14,8 +14,6 @@ const errorMessages = {
   incorrectImageUrl: 'Поле Image не является url адресом',
   incorrectTrailerUrl: 'Поле trailerLink не является url адресом',
   incorrectThumbnail: 'Поле thumbnail не является url адресом',
-  
-
 };
 
 module.exports = { devDataBase, errorMessages };
