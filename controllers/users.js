@@ -12,9 +12,9 @@ module.exports.updateUserInfo = async (req, res, next) => {
   const { name, email } = req.body;
 
   try {
-    const isUserExists = Boolean(User.findOne({ email }));
+    const user = await User.findOne({ email });
 
-    if (isUserExists) {
+    if (user) {
       throw new ConflictError(errorMessages.userDuplication);
     }
 
@@ -78,7 +78,7 @@ module.exports.getMe = async (req, res, next) => {
   try {
     const user = await User.findById(req.user._id);
     if (!user) {
-      throw NotFoundError(errorMessages.userNotExist);
+      throw new NotFoundError(errorMessages.userNotExist);
     }
     return res.send(user);
   } catch (err) {

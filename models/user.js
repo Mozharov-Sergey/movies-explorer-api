@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
+const { errorMessages } = require('../utils/constants');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -23,7 +24,7 @@ const userSchema = new mongoose.Schema({
       validator(value) {
         return validator.isEmail(value);
       },
-      message: 'Не корректный email',
+      message: errorMessages.incorrectEmail,
     },
   },
 });

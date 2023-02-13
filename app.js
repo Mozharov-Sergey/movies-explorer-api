@@ -10,8 +10,6 @@ const { devDataBase } = require('./utils/constants');
 const { errorsHandler } = require('./middlewares/errorsHandler');
 const { requestLogger, errorLogger } = require('./middlewares/loggers');
 const { index } = require('./routes/index');
-const { auth } = require('./middlewares/auth');
-const { return404 } = require('./utils/utils');
 
 const app = express();
 
@@ -30,7 +28,6 @@ app.use(express.json());
 app.use(requestLogger);
 
 app.use('/api', index);
-app.use('*', auth, return404);
 
 app.use(errorLogger);
 app.use(errors());
